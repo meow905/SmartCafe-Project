@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "bot": "node bot.js",
+    "_test": "echo \"Error: no test specified\" && exit 1",
+    "_start": "node server.js"
   },
   "keywords": [],
   "author": "",
