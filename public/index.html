@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Кухонный интерфейс</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 0 10px;
+      }
+      h1 {
+        text-align: center;
+      }
+      .order {
+        border: 1px solid #ccc;
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+        background: #f9f9f9;
+      }
+      .order h3 {
+        margin: 0 0 6px 0;
+      }
+      .items {
+        margin: 6px 0;
+        padding-left: 18px;
+      }
+      button {
+        margin-right: 6px;
+        padding: 6px 12px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        color: white;
+      }
+      .pending {
+        background-color: #999;
+      }
+      .accepted {
+        background-color: #2196f3;
+      }
+      .cooking {
+        background-color: #ff9800;
+      }
+      .ready {
+        background-color: #4caf50;
+      }
+      /* .paid {
+        background-color: #4ca5af;
+      }
+      .receipt {
+        background-color: #534caf;
+      } */
+    </style>
+  </head>
+  <body>
+    <!-- <audio id="order-sound" src="sounds/icq.mp3" preload="auto"></audio> -->
+
+    <h1>Заказы на кухне</h1>
+    <div id="ordersContainer">Загрузка заказов...</div>
+
+    <script>
+      const ordersContainer = document.getElementById("ordersContainer");
+      const finalStatuses = ["ready"];
+      function fetchOrders() {
+        fetch("/api/orders")
+          .then((res) => res.json())
+          .then((orders) => {
+            if (!orders.length) {
+              ordersContainer.innerHTML = "<p>Заказов нет</p>";
+              return;
+            }
+            ordersContainer.innerHTML = "";
+            orders.forEach((order) => {
+              const div = document.createElement("div");
+              div.className = "order";
+
+              div.innerHTML = `
+          <h3>Заказ #${order.id} — Стол ${order.table_id}</h3>
+          <p><strong>Статус:</strong> <span class="${order.status}">${
+                order.status
+              }</span></p>
+          <ul class="items">
+            ${order.items
+              .map((item) => `<li>${item.name} — ${item.price} Сомони</li>`)
+              .join("")}
+          </ul>
+              <div class="buttons-container">
+            ${
+              finalStatuses.includes(order.status)
+                ? "" // если статус конечный — кнопки не показываем
+                : `
+                  <button data-id="${order.id}" data-status="accepted" style="background:#2196F3;">Принят</button>
+                  <button data-id="${order.id}" data-status="cooking" style="background:#ff9800;">Готовится</button>
+                  <button data-id="${order.id}" data-status="ready" style="background:#4caf50;">На выдаче</button>
+                  
+                `
+              // <button data-id="${order.id}" data-status="paid" style="background:#4caf50;">Оплачено</button>
+              // <button data-id="${order.id}" data-status="receipt" style="background:#4caf50;">Чек</button>
+            }
+          </div>
+        `;
+
+              ordersContainer.appendChild(div);
+            });
+
+            // Назначаем обработчики кнопок
+            ordersContainer.querySelectorAll("button").forEach((btn) => {
+              btn.onclick = () => {
+                const orderId = btn.getAttribute("data-id");
+                const status = btn.getAttribute("data-status");
+
+                fetch(`/api/orders/${orderId}/status`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ status }),
+                })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    if (data.success) {
+                      fetchOrders();
+                    } else {
+                      alert("Ошибка обновления статуса");
+                    }
+                  })
+                  .catch(() => alert("Ошибка сети"));
+              };
+            });
+          })
+          .catch(() => {
+            ordersContainer.innerHTML = "<p>Ошибка загрузки заказов</p>";
+          });
+      }
+
+      fetchOrders();
+      setInterval(fetchOrders, 5000); // обновлять список каждые 5 секунд
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+cybercafe-latest
+
+login:
+admin
+pass:
+123qwe45
+
+
+1. create DB
+.open cybercafe-latest.db
+2.
+
+HTTP API:
+7679080253:AAHNA7a7cGGLOZX8WR4MX46AOso1csYwnBU
+
+ web для кухни:
+Создать веб-сервер с Express
+npm install express body-parser
+
+
+доплатить 90
+155 в месяц за интернет.
