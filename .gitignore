@@ -1,0 +1,21 @@
+# Node.js
+node_modules/
+package-lock.json
+.env
+
+# Logs
+logs
+*.log
+
+# IDE
+.vscode/
+.DS_Store
+Thumbs.db
+
+# System
+*.swp
+*.swo
+
+# Optional: build artifacts
+dist/
+build/

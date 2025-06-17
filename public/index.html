@@ -121,6 +121,15 @@
                   .then((res) => res.json())
                   .then((data) => {
                     if (data.success) {
+                      orders.forEach((order)=> {
+                        // console.log(order);
+                        // console.log(order.status)
+                        console.dir(order.status == "ready" ? "ok" : "not Ok");
+                        
+                      })
+                     
+                      // console.log(orders);
+                      
                       fetchOrders();
                     } else {
                       alert("Ошибка обновления статуса");
